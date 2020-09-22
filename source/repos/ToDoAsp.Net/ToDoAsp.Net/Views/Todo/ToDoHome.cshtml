@@ -1,0 +1,138 @@
+﻿@model ToDoViewModel
+@{
+	ViewData["Title"] = "ToDoHome";
+}
+
+<h1>ToDoHome</h1>
+
+<form asp-action="Add" asp-controller="Todo" method="post">
+	<div class="form-group d-flex">
+
+		<input type="text" class="form-control" asp-for="@Model.Todo.Title" placeholder="Title">
+		<input hidden type="checkbox" value="false" asp-for="@Model.Todo.IsDone" />
+
+		<button type="submit" class="btn btn-success bmd-btn-fab">+</button>
+	</div>
+
+</form>
+
+
+
+
+
+		<form method="post" asp-action="ChangeStatus" asp-controller="ToDo">
+<table class="table">
+	<thead>
+		<tr>
+			<th scope="col">Id</th>
+			<th scope="col">Status</th>
+			<th scope="col">Title</th>
+			<th scope="col">Action</th>
+		</tr>
+	</thead>
+	<tbody>
+
+			
+				@{ 
+
+					int i = 0;
+				}
+			@foreach (var item in Model.ToDos)
+			{
+				<tr>
+					<td>
+						<input hidden  type="text" name="[@i].Id"  value="@item.Id" />
+						@item.Id
+					</td>
+					<th scope="row">
+						<div class="checkbox">
+							
+							<label><input type="checkbox" name="[@i].IsDone"  value="true" checked=@item.IsDone ></label>
+						</div>
+					</th>
+					<td>
+						
+						<input  hidden type="text" name="[@i].Title"   value="@item.Title"/> 
+
+					@item.Title
+					</td>
+
+					@{ i++;
+							}
+					<td class="d-flex">
+
+
+						<button type="button" class="btn  bmd-btn-icon" data-toggle="modal" data-target="#editmodal"
+								onclick="Edit(@item.Id,'@item.Title', '@item.IsDone')">
+							<i class="material-icons" style="color:green">edit</i>
+						</button>
+
+
+						<a class="btn  bmd-btn-icon" asp-action="Delete" asp-controller="ToDo" asp-route-id="@item.Id">
+							<i class="material-icons" style="color:red">delete</i>
+						</a>
+
+
+					</td>
+				
+				</tr>
+
+			}
+
+		
+
+	</tbody>
+</table>
+
+
+
+<button type="submit" class="btn btn-primary" >
+	Change Status
+</button>
+		</form>
+
+
+
+<div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form asp-action="Edit" asp-controller="ToDo" method="post">
+				<div class="modal-body">
+
+					<input hidden  asp-for="@Model.Todo.Id" class="hide" id="ModalID" />
+					<input type="text" asp-for="@Model.Todo.Title"  id="ModalTitle">
+					<input hidden asp-for="@Model.Todo.IsDone"  id="ModalDone" />
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	
+	function Edit(id, title, isDone) {
+		
+		var status;
+		if (isDone.toLowerCase() == 'true') {
+			status = true;
+		}
+		else status = false;
+		document.getElementById('ModalID').value = id;
+		document.getElementById('ModalDone').value = status
+		document.getElementById('ModalTitle').value = title;
+	}
+
+
+
+</script>
